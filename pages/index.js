@@ -19,6 +19,27 @@ function ProfileSidebar(propriedades) {
     </Box>
   )
 }
+function ProfileRelationsBox(propriedades) {
+  return (
+    <ProfileRelationsBoxWrapper>
+      <h1 className="smallTitle">
+        {propriedades.title}({propriedades.items.length})
+      </h1>
+      <ul>
+        {/*{seguidores.map((itemAtual) => {
+          return (
+            <li key={itemAtual}>
+              <a href={`/user/${itemAtual}`}>
+                <img src={itemAtual.image} />
+                <span>{itemAtual.title}</span>
+              </a>
+            </li>
+          )
+        })}*/}
+      </ul>
+    </ProfileRelationsBoxWrapper>
+  )
+}
 
 export default function Home() {
   const imageUser = 'leonamjop'
@@ -38,6 +59,19 @@ export default function Home() {
     'Mateusbitt',
     'CaioWzy'
   ]
+  const [seguidores, setSeguidores] = React.useState([]);
+  /*0 - Pegar o Array de dados do GitHub*/
+  React.useEffect(function () {
+    fetch('https://api.github.com/users/leonamjop/followers')
+      .then(function (respostaDoServidor) {
+        return respostaDoServidor.json();
+      })
+      .then(function (restostaCompleta) {
+        setSeguidores(restostaCompleta);
+      })
+  }, [])
+  /*1 - Criar um box que vai ter um map, baseado nos itens do array que pegamos do GitHub */
+
   return (
     <>
       <AlurakutMenu />
@@ -63,8 +97,8 @@ export default function Home() {
 
               console.log('Campo: ', dadosDoForm.get('title'));
               console.log('Campo: ', dadosDoForm.get('image'));
-              
-              const comunidade ={
+
+              const comunidade = {
                 id: new Date().toISOString(),
                 title: dadosDoForm.get('title'),
                 image: dadosDoForm.get('image'),
@@ -98,6 +132,7 @@ export default function Home() {
         </div>
 
         <div className="profileRelationsArea" style={{ gridArea: 'profileRelationsArea' }}>
+          <ProfileRelationsBox title='Seguidores' items={seguidores} />
           <ProfileRelationsBoxWrapper>
             <h2 className="smallTitle">
               Comunidades({comunidades.length})
@@ -115,6 +150,7 @@ export default function Home() {
               })}
             </ul>
           </ProfileRelationsBoxWrapper>
+
           <ProfileRelationsBoxWrapper>
             <h2 className="smallTitle">
               Pesssoas da Comunidade ({pessoasFavoritas.length})
